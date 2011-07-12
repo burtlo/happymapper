@@ -69,6 +69,24 @@ module Analytics
   end
 end
 
+module Atom
+  class Feed
+    include HappyMapper
+    tag 'feed'
+
+    attribute :xmlns, String, :single => true
+    element :id, String, :single => true
+    element :title, String, :single => true
+    element :updated, DateTime, :single => true
+    element :link, String, :single => false, :attributes => {
+        :rel => String,
+        :type => String,
+        :href => String
+      }
+    # has_many :entries, Entry # nothing interesting in the entries
+  end
+end
+
 class Address
   include HappyMapper
 
@@ -699,6 +717,12 @@ describe HappyMapper do
     first.feels_like.should == 51
     first.current_condition.should == 'Sunny'
     first.current_condition.icon.should == 'http://deskwx.weatherbug.com/images/Forecast/icons/cond007.gif'
+  end
+
+  it "parses xml with attributes of elements that aren't :single => true" do
+    feed = Atom::Feed.parse(fixture_file('atom.xml'))
+    feed.link.first.href.should == 'http://www.example.com'
+    feed.link.last.href.should == 'http://www.example.com/tv_shows.atom'
   end
 
   it "should parse xml with nested elements" do
