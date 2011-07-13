@@ -219,6 +219,40 @@ Attributes are absolutely the same as `element` or `has_many`
 Again, you can omit the tag if the attribute accessor symbol matches the name of the attribute.
 
 
+### Attributes On Empty Child Elements
+
+    <feed xml:lang="en-US" xmlns="http://www.w3.org/2005/Atom">
+      <id>tag:all-the-episodes.heroku.com,2005:/tv_shows</id>
+      <link rel="alternate" type="text/html" href="http://all-the-episodes.heroku.com"/>
+      <link rel="self" type="application/atom+xml" href="http://all-the-episodes.heroku.com/tv_shows.atom"/>
+      <title>TV Shows</title>
+      <updated>2011-07-10T06:52:27Z</updated>
+    </feed>
+
+In this case you would need to map an element to a new `Link` class just to access `<link>`s attributes, except that there is an alternate syntax. Instead of
+
+    class Feed
+    # ....
+      has_many :links, Link, :tag => 'link', :xpath => '.'
+    end
+
+    class Link
+      include HappyMapper
+
+      attribute :rel, String
+      attribute :type, String
+      attribute :href, String
+    end
+
+You can drop the `Link` class and simply replace the `has_many` on `Feed` with
+
+    element :link, String, :single => false, :attributes => { :rel => String, :type => String, :href => String }
+
+As there is no content, the type given for `:link` (`String` above) is irrelevant, but `nil` won't work and other types may try to perform typecasting and fail. You can omit the :single => false for elements that only occur once within their parent.
+
+This syntax is most appropriate for elements that (a) have attributes but no content and (b) only occur at only one level of the heirarchy. If `<feed>` contained another element that also contained a `<link>` (as atom feeds generally do) it would be DRY-er to use the first syntax, i.e. with a separate `Link` class.
+
+
 ## Class composition
 
 Our address has a country and that country element has a code. Up until this point we neglected it as we declared a `country` as being a `String`.
