@@ -530,6 +530,13 @@ class Video
   
 end
 
+class OptionalAttribute
+  include HappyMapper
+  tag 'address'
+  
+  attribute :street, String
+end
+
 
 describe HappyMapper do
 
@@ -881,6 +888,25 @@ describe HappyMapper do
   it "should parse lastfm namespaces" do
     l = Location.parse(fixture_file('lastfm.xml'))
     l.first.latitude.should == "51.53469"
+  end
+  
+  describe "Parse optional attributes" do
+    
+    it "should parse an empty String as empty" do
+      a = OptionalAttribute.parse(fixture_file('optional_attributes.xml'))
+      a[0].street.should == ""
+    end
+    
+    it "should parse a String with value" do
+      a = OptionalAttribute.parse(fixture_file('optional_attributes.xml'))
+      a[1].street.should == "Milchstrasse"
+    end
+    
+    it "should parse a String with value" do
+      a = OptionalAttribute.parse(fixture_file('optional_attributes.xml'))
+      a[2].street.should be_nil
+    end
+    
   end
 
   describe 'Xml Content' do

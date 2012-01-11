@@ -43,7 +43,7 @@ module HappyMapper
           if n.respond_to?(:content)
             typecast(n.content)
           else
-            typecast(n.to_s)
+            typecast(n)
           end
         end
       elsif constant == XmlContent
