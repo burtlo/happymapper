@@ -450,7 +450,7 @@ module HappyMapper
     # Create a tag in the builder that matches the class's tag name and append
     # any attributes to the element that were defined above.
     #
-    builder.send(self.class.tag_name,attributes) do |xml|
+    builder.send("#{self.class.tag_name}_",attributes) do |xml|
       
       #
       # Add all the registered namespaces to the root element.
@@ -542,7 +542,7 @@ module HappyMapper
           # an empty element will be written to the xml
           #
           if value.nil? && element.options[:single] && element.options[:state_when_nil]
-            xml.send(tag,"")
+            xml.send("#{tag}_","")
           end
         
           #
@@ -576,9 +576,9 @@ module HappyMapper
               # When a value exists we should append the value for the tag
               #
               if item_namespace
-                xml[item_namespace].send(tag,item.to_s)
+                xml[item_namespace].send("#{tag}_",item.to_s)
               else
-                xml.send(tag,item.to_s)
+                xml.send("#{tag}_",item.to_s)
               end
 
             else
@@ -587,7 +587,7 @@ module HappyMapper
               # Normally a nil value would be ignored, however if specified then
               # an empty element will be written to the xml
               #
-              xml.send(tag,"") if element.options[:state_when_nil]
+              xml.send("#{tag}_","") if element.options[:state_when_nil]
 
             end
 
