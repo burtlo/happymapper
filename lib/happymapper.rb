@@ -2,8 +2,12 @@ require 'nokogiri'
 require 'date'
 require 'time'
 
-class Boolean; end
-class XmlContent; end
+begin
+  require 'boolean'
+rescue LoadError
+  class Boolean; end unless defined? Boolean
+end
+class XmlContent; end unless defined? XmlContent
 
 module HappyMapper
 
